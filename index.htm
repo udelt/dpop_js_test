@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>DPoP test</title>
+</head>
+
+<body>
+    <script>
+        var dpopProof = {
+
+            key: undefined,
+            jwk: undefined,
+        };
+
+        var header = {
+            typ: "dpop+jwt",
+            alg: "ES256",
+            jwk: undefined
+        }
+
+        function ToBase64Url(input) {
+            const base64string = btoa(String.fromCharCode.apply(0, input));
+            return base64string.replace(/=/g, "").replace(/\+/g, "-").replace(/\//g, "_");
+        }
+
+        function Base64UrlToString(input) {
+            input = input.replace(/-/g, "+").replace(/_/g, "/").replace(/\s/g, "");
+            return new Uint8Array(
+                Array.prototype.map.call(atob(input), (c) => c.charCodeAt(0))
+            );
+        }
+
+        const utf8ToUint8Array = (str) => Base64UrlToString(btoa(unescape(encodeURIComponent(str))));
+
+        function JWT(privateKey, header, payload) {
+            const p = JSON.stringify(payload);
+            const h = JSON.stringify(header);
+
+            const partialToken = [
+                ToBase64Url(utf8ToUint8Array(h)),
+                ToBase64Url(utf8ToUint8Array(p)),
+            ].join(".");
+
+            const messageAsUint8Array = utf8ToUint8Array(partialToken);
+
+            const signature = crypto.subtle.sign({
+                    name: "ECDSA",
+                    hash: {
+                        name: "SHA-256"
+                    },
+                },
+                privateKey,
+                messageAsUint8Array
+            ).then(function(signed) {
+                const signatureAsBase64 = ToBase64Url(new Uint8Array(signed));
+                dpopProof.token = `${partialToken}.${signatureAsBase64}`;
+                console.log(dpopProof.token);
+            });
+            return;
+        }
+
+        function createDpopProof() {
+            crypto.subtle.generateKey({
+                    name: "ECDSA",
+                    namedCurve: "P-384"
+                }, true, ["sign", "verify"])
+                .then(function(eckey) {
+                    onKeyGenerated(eckey);
+                })
+                .catch(function(err) {
+                    console.error(err);
+                });
+        }
+
+        function onKeyGenerated(key) {
+            dpopProof.key = key;
+            crypto.subtle.exportKey("jwk", key.publicKey)
+                .then(function(keydata) {
+                    OnJwkCreated(keydata);
+                })
+                .catch(function(err) {
+                    console.error(err);
+                });
+        }
+
+        function OnJwkCreated(jwk) {
+            delete jwk.ext;
+            delete jwk.key_ops;
+
+            dpopProof.jwk = jwk;
+            header.jwk = dpopProof.jwk;
+            var token = JWT(dpopProof.key.privateKey, header, dpop_proof_payload);
+        }
+
+        function uuid() {
+            function randomDigit() {
+                if (crypto && crypto.getRandomValues) {
+                    var randomdata = new Uint8Array(1);
+                    crypto.getRandomValues(randomdata);
+                    return (randomdata[0] % 16).toString(16);
+                } else {
+                    return ((Math.random() * 16) | 0).toString(16);
+                }
+            }
+
+            var crypto = window.crypto || window.msCrypto;
+            return 'xxxxxxxx-xxxx-4xxx-8xxx-xxxxxxxxxxxx'.replace(/x/g, randomDigit);
+        }
+
+
+        var dpop_proof_payload = {
+            jti: uuid(),
+            htm: "POST",
+            htu: "https://myapi.com/protectedresource",
+            iat: Math.floor(Date.now() / 1000)
+        };
+
+        createDpopProof();
+    </script>
+
+</body>
+
+</html>
