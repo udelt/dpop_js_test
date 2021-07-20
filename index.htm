@@ -7,18 +7,6 @@
 
 <body>
     <script>
-        var dpopProof = {
-
-            key: undefined,
-            jwk: undefined,
-        };
-
-        var header = {
-            typ: "dpop+jwt",
-            alg: "ES256",
-            jwk: undefined
-        }
-
         function ToBase64Url(input) {
             const base64string = btoa(String.fromCharCode.apply(0, input));
             return base64string.replace(/=/g, "").replace(/\+/g, "-").replace(/\//g, "_");
@@ -108,6 +96,17 @@
             return 'xxxxxxxx-xxxx-4xxx-8xxx-xxxxxxxxxxxx'.replace(/x/g, randomDigit);
         }
 
+        var dpopProof = {
+
+            key: undefined,
+            jwk: undefined,
+        };
+
+        var header = {
+            typ: "dpop+jwt",
+            alg: "ES256",
+            jwk: undefined
+        }
 
         var dpop_proof_payload = {
             jti: uuid(),
