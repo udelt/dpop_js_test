@@ -4,7 +4,7 @@
 
 <head>
     <title>DPoP test</title>
-
+    
     <style>
         html body {
             background-color: white;
@@ -20,6 +20,10 @@
         
         .title {
             padding-left: 100px;
+        }
+
+        .section{
+            margin-left:100px;
         }
         
         .flex-container {
@@ -43,7 +47,7 @@
             margin-top: 10px;
             margin-bottom: 10px;
             background-color: white;
-            width: 40%;
+            width: 49%;
             border: 1px solid lightslategray;
             border-radius: 4px;
         }
@@ -137,7 +141,44 @@
             font-weight: bold;
             color: red;
         }
+
+
+        h2 button{
+            all: inherit;
+            border: 0;
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            padding: 0.5em 0;            
+        }
+
+        h2 button:focus svg {  
+            outline: 1px solid;
+        }
+ 
+        button svg {
+            height: 1em;
+            margin-left: 0.5em;
+        }
+        
+        [aria-expanded="true"] .vert {
+            display: none;
+        }
+
+        [aria-expanded] rect {
+            fill: currentColor;
+        }
+
+        [aria-expanded="true"] .vert {
+            display: none;
+        }
+
+        .expCollapse{
+            color: black;
+        }
+
     </style>
+    
 </head>
 
 
@@ -148,116 +189,149 @@
         <h3>Demonstrating Proof of Possession at the application layer</h3>
     </div>
 
-    <section id="section_dpop_proof">
-        <h1>1. Generating the DPoP proof to use for the token request</h1>
-        <div>
-            <button id="dpop_proof_btn">Generate the DPoP proof</button>
-        </div>
-        <div class="flex-container">
-            <div id="base64tokenContainer" class="tokenContainer">
-                <div class="header">BASE64URL ENCODED TOKEN</div>
-                <hr>
-                <div id="dpopProofBase64" class="base64" contenteditable="true"></div>
+    <div class="section" id="section1">
+        <h2 class="expCollapse">
+            <button aria-expanded="false">1. Generating the DPoP proof for the token request
+                <svg viewBox="0 0 10 10" aria-hidden="true" focusable="false">
+                    <rect class="vert" height="8" width="2" y="1" x="4" />
+                    <rect height="2" width="8" y="4" x="1" />
+                </svg> 
+            </button>
+        </h2>
+        <div hidden>
+            <div>
+                <button id="dpop_proof_btn">Generate the DPoP proof</button>
             </div>
+            <div class="flex-container">
+                <div id="base64tokenContainer" class="tokenContainer">
+                    <div class="header">BASE64URL ENCODED TOKEN</div>
+                    <hr>
+                    <div id="dpopProofBase64" class="base64" contenteditable="true"></div>
+                </div>
 
-            <div id="jsonTokenContainer" class="tokenContainer">
-                <div class="header">JSON FORMATTED TOKEN</div>
-                <hr>
-                <div class="subtitle">Jose header:</div>
-                <hr>
-                <div id="jwtHeader" class="code" contenteditable="true"></div>
-                <hr>
-                <div class="subtitle">Payload:</div>
-                <hr>
-                <div id="jwtPayload" class="code" contenteditable="true"></div>
-                <hr>
-                <div class="subtitle">Signature:</div>
-                <hr>
-                <div id="jwtSignature" class="code" contenteditable="true"></div>
+                <div id="jsonTokenContainer" class="tokenContainer">
+                    <div class="header">JSON FORMATTED TOKEN</div>
+                    <hr>
+                    <div class="subtitle">Jose header:</div>
+                    <hr>
+                    <div id="jwtHeader" class="code" contenteditable="true"></div>
+                    <hr>
+                    <div class="subtitle">Payload:</div>
+                    <hr>
+                    <div id="jwtPayload" class="code" contenteditable="true"></div>
+                    <hr>
+                    <div class="subtitle">Signature:</div>
+                    <hr>
+                    <div id="jwtSignature" class="code" contenteditable="true"></div>
+                </div>
             </div>
-        </div>
-        </div>
-    </section>
+        </div>  
+    </div>  
+    <hr>
+    <div class="section" id="section2"> 
+        <h2  class="expCollapse">
+            <button aria-expanded="false">2. Using the DPoP proof for the token request
+                <svg viewBox="0 0 10 10" aria-hidden="true" focusable="false">
+                    <rect class="vert" height="8" width="2" y="1" x="4" />
+                    <rect height="2" width="8" y="4" x="1" />
+                </svg> 
+            </button>
+        </h2>
+        <div hidden>
+            <div>
+                <button id="get_access_token_using_proof">Get the access token using DPoP proof</button>
+            </div>
+            <div class="flex-container">
+                <div id="base64AccessTokenContainer" class="tokenContainer">
+                    <div class="header">BASE64URL ENCODED TOKEN</div>
+                    <hr>
+                    <div id="accessTokenBase64" class="base64" contenteditable="true"></div>
+                </div>
 
-    <section id="section_accessToken">
-        <h1>2. Using the DPoP proof for the token request</h1>
-        <h3>receiving the Access Token with DPoP binding</h2>
-        <div>
-            <button id="get_access_token_using_proof">Get the access token using DPoP proof</button>
-        </div>
-        <div class="flex-container">
-            <div id="base64AccessTokenContainer" class="tokenContainer">
-                <div class="header">BASE64URL ENCODED TOKEN</div>
-                <hr>
-                <div id="accessTokenBase64" class="base64" contenteditable="true"></div>
+                <div id="jsonAccessTokenContainer" class="tokenContainer">
+                    <div class="header">JSON FORMATTED TOKEN</div>
+                    <hr>
+                    <div class="subtitle">Jose header:</div>
+                    <hr>
+                    <div id="at_jwtHeader" class="code" contenteditable="true"></div>
+                    <hr>
+                    <div class="subtitle">Payload:</div>
+                    <hr>
+                    <div id="at_jwtPayload" class="code" contenteditable="true"></div>
+                    <hr>
+                    <div class="subtitle">Signature:</div>
+                    <hr>
+                    <div id="at_jwtSignature" class="code" contenteditable="true"></div>
+                </div>
             </div>
+            <div>
+                <h2>The Access Token hash:</h2>
+                <div id="at_hash"></div>
+            </div>
+        </div>
+    </div>
+    <hr>
+    <div class="section" id="section3">
+        <h2  class="expCollapse">
+            <button aria-expanded="false">3. Create new DPoP proof that contains Access Token hash
+                <svg viewBox="0 0 10 10" aria-hidden="true" focusable="false">
+                    <rect class="vert" height="8" width="2" y="1" x="4" />
+                    <rect height="2" width="8" y="4" x="1" />
+                </svg> 
+            </button>
+        </h2>
+        <div hidden>
+            <div>
+                <button id="api_btn">Call the access token with a new DPoP proof and the Access Token</button>
+            </div>
+            <div class="flex-container">
+                <div id="base64AccessTokenContainer" class="tokenContainer">
+                    <div class="header">BASE64URL ENCODED TOKEN</div>
+                    <hr>
+                    <div id="dpopProofResourceBase64" class="base64" contenteditable="true"></div>
+                </div>
 
-            <div id="jsonAccessTokenContainer" class="tokenContainer">
-                <div class="header">JSON FORMATTED TOKEN</div>
-                <hr>
-                <div class="subtitle">Jose header:</div>
-                <hr>
-                <div id="at_jwtHeader" class="code" contenteditable="true"></div>
-                <hr>
-                <div class="subtitle">Payload:</div>
-                <hr>
-                <div id="at_jwtPayload" class="code" contenteditable="true"></div>
-                <hr>
-                <div class="subtitle">Signature:</div>
-                <hr>
-                <div id="at_jwtSignature" class="code" contenteditable="true"></div>
+                <div id="jsonAccessTokenContainer" class="tokenContainer">
+                    <div class="header">JSON FORMATTED TOKEN</div>
+                    <hr>
+                    <div class="subtitle">Jose header:</div>
+                    <hr>
+                    <div id="res_jwtHeader" class="code" contenteditable="true"></div>
+                    <hr>
+                    <div class="subtitle">Payload:</div>
+                    <hr>
+                    <div id="res_jwtPayload" class="code" contenteditable="true"></div>
+                    <hr>
+                    <div class="subtitle">Signature:</div>
+                    <hr>
+                    <div id="res_jwtSignature" class="code" contenteditable="true"></div>
+                </div>
             </div>
         </div>
-        <div>
-            <h2>The Access Token hash:</h2>
-            <div id="at_hash"></div>
-        </div>
-    </section>
-    <section id="section_calling_resource_A">
-        <h1>3. Calling the API</h1>
-        <h3>3.a) Create new DPoP proof that contains Access Token hash</h2>
-        <div>
-            <button id="api_btn">Cal the access token with a new DPoP proof and the Access Token</button>
-        </div>
-        <div class="flex-container">
-            <div id="base64AccessTokenContainer" class="tokenContainer">
-                <div class="header">BASE64URL ENCODED TOKEN</div>
-                <hr>
-                <div id="dpopProofResourceBase64" class="base64" contenteditable="true"></div>
+    </div>
+    <hr>
+    <div class="section" id="section4">  
+        <h2 class="expCollapse">
+            <button aria-expanded="false">4. Calling the API with DPoP proof and Access Token
+                <svg viewBox="0 0 10 10" aria-hidden="true" focusable="false">
+                    <rect class="vert" height="8" width="2" y="1" x="4" />
+                    <rect height="2" width="8" y="4" x="1" />
+                </svg> 
+            </button>
+        </h2>            
+        <div hidden>
+            <div>
+                <button id="call_api_btn">Call the API with the new DPoP proof and the Access Token</button>
             </div>
-
-            <div id="jsonAccessTokenContainer" class="tokenContainer">
-                <div class="header">JSON FORMATTED TOKEN</div>
-                <hr>
-                <div class="subtitle">Jose header:</div>
-                <hr>
-                <div id="res_jwtHeader" class="code" contenteditable="true"></div>
-                <hr>
-                <div class="subtitle">Payload:</div>
-                <hr>
-                <div id="res_jwtPayload" class="code" contenteditable="true"></div>
-                <hr>
-                <div class="subtitle">Signature:</div>
-                <hr>
-                <div id="res_jwtSignature" class="code" contenteditable="true"></div>
+            <div class="flex-container">
+                <div id="base64AccessTokenContainer" class="tokenContainer">
+                    <div class="header">Response data</div>
+                    <hr>
+                    <div id="apiResponseContent" class="apiResponse" contenteditable="true"></div>
+                </div>
             </div>
-        </div>
-    </section>
-    <section id="section_calling_resource_A">
-        <h1>3. Calling the API</h1>
-        <h3>3.b) Calling the API with DPoP proof and Access Token</h2>
-        <div>
-            <button id="call_api_btn">Call the API with the new DPoP proof and the Access Token</button>
-        </div>
-        <div class="flex-container">
-            <div id="base64AccessTokenContainer" class="tokenContainer">
-                <div class="header">Response data</div>
-                <hr>
-                <div id="apiResponseContent" class="apiResponse" contenteditable="true"></div>
-            </div>
-        </div>
-    </section>
-
+        </div>    
+    </div>
     <script type="Module">
         
         import * as Dpop from './main.js';
@@ -314,5 +388,32 @@
             });
         });
     </script>
+
+<script>
+    (function() {
+  const headings = document.querySelectorAll('.expCollapse');
+  console.log(headings.length);
+  var i = 0;
+  Array.prototype.forEach.call(headings, h => {
+    let btn = h.querySelector('button');    
+    let target = h.nextElementSibling;
+    i++;
+    try{
+        var scrollTo = document.getElementById(`section${i}`)        
+    }catch(err)
+    {
+        console.error(err);
+    }
+    
+    btn.onclick = () => {
+      let expanded = btn.getAttribute('aria-expanded') === 'true';
+
+      btn.setAttribute('aria-expanded', !expanded);
+      target.hidden = expanded;
+      scrollTo.scrollIntoView();
+    }
+  });
+})()
+</script>
 </body>
 </html>
