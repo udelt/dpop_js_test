@@ -1,0 +1,25 @@
+
+// function generateDpopProof(){ 
+    //     var accessToken = await Module.start(); 
+    //     localStorage.setItem("access_token", accessToken); 
+    //     await Module.renderBase64DpopProof(document, document.getElementById('dpopProofBase64')); 
+    //     await Module.renderJwt(document, document.getElementById('jwtHeader'), document.getElementById('jwtPayload'), document.getElementById('jwtSignature')); 
+    // } 
+
+//await Module.renderBase64DpopProof(document, document.getElementById('dpopProofBase64')); 
+//await Module.renderJwt(document, document.getElementById('jwtHeader'), document.getElementById('jwtPayload'), document.getElementById('jwtSignature'));
+
+
+.then(() =>{
+                         Dpop.renderJwt(document, document.getElementById('jwtHeader'), document.getElementById('jwtPayload'), document.getElementById('jwtSignature'));
+                     });
+
+
+                                         .then((result) =>{
+                        Dpop.renderBase64DpopProof(document, document.getElementById('dpopProofBase64')); 
+                    });     
+
+
+
+                                   
+    

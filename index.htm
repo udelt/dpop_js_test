@@ -1,123 +1,318 @@
 <!DOCTYPE html>
 <html>
+<meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' https://localhost:10001/;">
 
 <head>
     <title>DPoP test</title>
+
+    <style>
+        html body {
+            background-color: white;
+        }
+        
+        h1,
+        h2,
+        h3 {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            text-transform: uppercase;
+            color: slategrey;
+        }
+        
+        .title {
+            padding-left: 100px;
+        }
+        
+        .flex-container {
+            background-color: white;
+            display: flex;
+            flex-direction: row;
+            width: 100%;
+            height: auto;
+            justify-content: space-evenly;
+        }
+        
+        .flex-container-code {
+            display: flex;
+            flex-direction: row;
+            width: 100%;
+            height: auto;
+            justify-content: left;
+        }
+        
+        .tokenContainer {
+            margin-top: 10px;
+            margin-bottom: 10px;
+            background-color: white;
+            width: 40%;
+            border: 1px solid lightslategray;
+            border-radius: 4px;
+        }
+        
+        .code {
+            font-size: 10pt;
+            font-family: monospace;
+            tab-size: 4;
+            margin: 0px;
+            padding-left: 15px;
+            padding-right: 15px;
+        }
+        
+        .base64 {
+            font-size: 18pt;
+            font-family: monospace;
+            padding: 10px;
+            overflow-wrap: break-word;
+        }
+
+        .apiResponse{
+            font-size: 10pt;
+            font-family: monospace;
+            tab-size: 4;
+            margin: 0px;
+            padding-left: 15px;
+            padding-right: 15px;
+        }
+        
+        .header {
+            color: slategrey;
+            text-align: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 22px;
+        }
+        
+        .subtitle {
+            color: slategrey;
+            text-align: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 18;
+            text-transform: uppercase;
+        }
+        
+        .jwt-header {
+            color: rebeccapurple;
+        }
+        
+        .jwt-payload {
+            color: cornflowerblue;
+        }
+        
+        .jwt-signature {
+            color: coral;
+        }
+        
+        .jwt-part-separator {
+            margin-left: 3px;
+            margin-right: 3px;
+            color: black;
+        }
+        
+        .code-line {
+            word-wrap: break-word;
+            white-space: pre-wrap;
+            word-break: normal;
+        }
+        
+        .claim {
+            text-indent: 0;
+        }
+        
+        .claim_type {
+            font-weight: bold;
+            color: indigo;
+        }
+        
+        .claim_value {
+            font-style: oblique;
+        }
+        
+        .tabx1 {
+            margin-left: 15px;
+        }
+        
+        .tabx2 {
+            margin-left: 30px;
+        }
+
+        .accentuate{
+            font-weight: bold;
+            color: red;
+        }
+    </style>
 </head>
 
+
 <body>
-    <script>
-        function ToBase64Url(input) {
-            const base64string = btoa(String.fromCharCode.apply(0, input));
-            return base64string.replace(/=/g, "").replace(/\+/g, "-").replace(/\//g, "_");
-        }
 
-        function Base64UrlToString(input) {
-            input = input.replace(/-/g, "+").replace(/_/g, "/").replace(/\s/g, "");
-            return new Uint8Array(
-                Array.prototype.map.call(atob(input), (c) => c.charCodeAt(0))
-            );
-        }
+    <div class="title">
+        <h1>DPoP</h1>
+        <h3>Demonstrating Proof of Possession at the application layer</h3>
+    </div>
 
-        const utf8ToUint8Array = (str) => Base64UrlToString(btoa(unescape(encodeURIComponent(str))));
+    <section id="section_dpop_proof">
+        <h1>1. Generating the DPoP proof to use for the token request</h1>
+        <div>
+            <button id="dpop_proof_btn">Generate the DPoP proof</button>
+        </div>
+        <div class="flex-container">
+            <div id="base64tokenContainer" class="tokenContainer">
+                <div class="header">BASE64URL ENCODED TOKEN</div>
+                <hr>
+                <div id="dpopProofBase64" class="base64" contenteditable="true"></div>
+            </div>
 
-        function JWT(privateKey, header, payload) {
-            const p = JSON.stringify(payload);
-            const h = JSON.stringify(header);
+            <div id="jsonTokenContainer" class="tokenContainer">
+                <div class="header">JSON FORMATTED TOKEN</div>
+                <hr>
+                <div class="subtitle">Jose header:</div>
+                <hr>
+                <div id="jwtHeader" class="code" contenteditable="true"></div>
+                <hr>
+                <div class="subtitle">Payload:</div>
+                <hr>
+                <div id="jwtPayload" class="code" contenteditable="true"></div>
+                <hr>
+                <div class="subtitle">Signature:</div>
+                <hr>
+                <div id="jwtSignature" class="code" contenteditable="true"></div>
+            </div>
+        </div>
+        </div>
+    </section>
 
-            const partialToken = [
-                ToBase64Url(utf8ToUint8Array(h)),
-                ToBase64Url(utf8ToUint8Array(p)),
-            ].join(".");
+    <section id="section_accessToken">
+        <h1>2. Using the DPoP proof for the token request</h1>
+        <h3>receiving the Access Token with DPoP binding</h2>
+        <div>
+            <button id="get_access_token_using_proof">Get the access token using DPoP proof</button>
+        </div>
+        <div class="flex-container">
+            <div id="base64AccessTokenContainer" class="tokenContainer">
+                <div class="header">BASE64URL ENCODED TOKEN</div>
+                <hr>
+                <div id="accessTokenBase64" class="base64" contenteditable="true"></div>
+            </div>
 
-            const messageAsUint8Array = utf8ToUint8Array(partialToken);
+            <div id="jsonAccessTokenContainer" class="tokenContainer">
+                <div class="header">JSON FORMATTED TOKEN</div>
+                <hr>
+                <div class="subtitle">Jose header:</div>
+                <hr>
+                <div id="at_jwtHeader" class="code" contenteditable="true"></div>
+                <hr>
+                <div class="subtitle">Payload:</div>
+                <hr>
+                <div id="at_jwtPayload" class="code" contenteditable="true"></div>
+                <hr>
+                <div class="subtitle">Signature:</div>
+                <hr>
+                <div id="at_jwtSignature" class="code" contenteditable="true"></div>
+            </div>
+        </div>
+        <div>
+            <h2>The Access Token hash:</h2>
+            <div id="at_hash"></div>
+        </div>
+    </section>
+    <section id="section_calling_resource_A">
+        <h1>3. Calling the API</h1>
+        <h3>3.a) Create new DPoP proof that contains Access Token hash</h2>
+        <div>
+            <button id="api_btn">Cal the access token with a new DPoP proof and the Access Token</button>
+        </div>
+        <div class="flex-container">
+            <div id="base64AccessTokenContainer" class="tokenContainer">
+                <div class="header">BASE64URL ENCODED TOKEN</div>
+                <hr>
+                <div id="dpopProofResourceBase64" class="base64" contenteditable="true"></div>
+            </div>
 
-            const signature = crypto.subtle.sign({
-                    name: "ECDSA",
-                    hash: {
-                        name: "SHA-256"
-                    },
-                },
-                privateKey,
-                messageAsUint8Array
-            ).then(function(signed) {
-                const signatureAsBase64 = ToBase64Url(new Uint8Array(signed));
-                dpopProof.token = `${partialToken}.${signatureAsBase64}`;
-                console.log(dpopProof.token);
+            <div id="jsonAccessTokenContainer" class="tokenContainer">
+                <div class="header">JSON FORMATTED TOKEN</div>
+                <hr>
+                <div class="subtitle">Jose header:</div>
+                <hr>
+                <div id="res_jwtHeader" class="code" contenteditable="true"></div>
+                <hr>
+                <div class="subtitle">Payload:</div>
+                <hr>
+                <div id="res_jwtPayload" class="code" contenteditable="true"></div>
+                <hr>
+                <div class="subtitle">Signature:</div>
+                <hr>
+                <div id="res_jwtSignature" class="code" contenteditable="true"></div>
+            </div>
+        </div>
+    </section>
+    <section id="section_calling_resource_A">
+        <h1>3. Calling the API</h1>
+        <h3>3.b) Calling the API with DPoP proof and Access Token</h2>
+        <div>
+            <button id="call_api_btn">Call the API with the new DPoP proof and the Access Token</button>
+        </div>
+        <div class="flex-container">
+            <div id="base64AccessTokenContainer" class="tokenContainer">
+                <div class="header">Response data</div>
+                <hr>
+                <div id="apiResponseContent" class="apiResponse" contenteditable="true"></div>
+            </div>
+        </div>
+    </section>
+
+    <script type="Module">
+        
+        import * as Dpop from './main.js';
+        window.Dpop = Dpop;
+        let DpopProofForAs = null;
+        let DpopProofForResource = null;
+        let AccessToken = null;
+        let AccessTokenHash = null;
+
+        const ResourceUrl = "https://localhost:44358/DPoP"
+        
+        let dpopProofBtn = document.getElementById('dpop_proof_btn');
+
+        dpopProofBtn.addEventListener('click', () => {
+            Dpop.generateDpopProof(ResourceUrl)
+            .then((proof)=>{
+                DpopProofForAs = proof;
+                Dpop.renderBase64DpopProof(document, document.getElementById('dpopProofBase64'), proof.dpopProof);
+                Dpop.renderJwt(document, proof.dpopProof, document.getElementById('jwtHeader'), document.getElementById('jwtPayload'), document.getElementById('jwtSignature'));
             });
-            return;
-        }
+        });
 
-        function createDpopProof() {
-            crypto.subtle.generateKey({
-                    name: "ECDSA",
-                    namedCurve: "P-384"
-                }, true, ["sign", "verify"])
-                .then(function(eckey) {
-                    onKeyGenerated(eckey);
-                })
-                .catch(function(err) {
-                    console.error(err);
+        let tokenBtn = document.getElementById('get_access_token_using_proof');
+        tokenBtn.addEventListener('click', () => {            
+            Dpop.getAccessToken("https://localhost:5001/connect/token", DpopProofForAs.dpopProof)
+            .then((accessToken) => {
+                AccessToken = accessToken;
+                Dpop.renderBase64DpopProof(document, document.getElementById('accessTokenBase64'), accessToken);
+                Dpop.renderJwt(document, accessToken, document.getElementById('at_jwtHeader'), document.getElementById('at_jwtPayload'), document.getElementById('at_jwtSignature'));
+                Dpop.getAccessTokenHash(accessToken)
+                .then((hash) => {
+                    AccessTokenHash = hash;
+                    document.getElementById('at_hash').innerText = hash;                    
                 });
-        }
+            });
+        });
 
-        function onKeyGenerated(key) {
-            dpopProof.key = key;
-            crypto.subtle.exportKey("jwk", key.publicKey)
-                .then(function(keydata) {
-                    OnJwkCreated(keydata);
-                })
-                .catch(function(err) {
-                    console.error(err);
-                });
-        }
+        let apiBtn = document.getElementById('api_btn');
+        apiBtn.addEventListener('click', () => {
+            Dpop.generateDpopProofForResource(AccessTokenHash, DpopProofForAs, ResourceUrl).
+            then((proof) => {
+                DpopProofForResource = proof;
+                console.log(proof);
+                Dpop.renderBase64DpopProof(document, document.getElementById('dpopProofResourceBase64'), proof.dpopProof);
+                Dpop.renderJwt(document, proof.dpopProof, document.getElementById('res_jwtHeader'), document.getElementById('res_jwtPayload'), document.getElementById('res_jwtSignature'));
+            })
+        });
 
-        function OnJwkCreated(jwk) {
-            delete jwk.ext;
-            delete jwk.key_ops;
-
-            dpopProof.jwk = jwk;
-            header.jwk = dpopProof.jwk;
-            var token = JWT(dpopProof.key.privateKey, header, dpop_proof_payload);
-        }
-
-        function uuid() {
-            function randomDigit() {
-                if (crypto && crypto.getRandomValues) {
-                    var randomdata = new Uint8Array(1);
-                    crypto.getRandomValues(randomdata);
-                    return (randomdata[0] % 16).toString(16);
-                } else {
-                    return ((Math.random() * 16) | 0).toString(16);
-                }
-            }
-
-            var crypto = window.crypto || window.msCrypto;
-            return 'xxxxxxxx-xxxx-4xxx-8xxx-xxxxxxxxxxxx'.replace(/x/g, randomDigit);
-        }
-
-        var dpopProof = {
-
-            key: undefined,
-            jwk: undefined,
-        };
-
-        var header = {
-            typ: "dpop+jwt",
-            alg: "ES256",
-            jwk: undefined
-        }
-
-        var dpop_proof_payload = {
-            jti: uuid(),
-            htm: "POST",
-            htu: "https://myapi.com/protectedresource",
-            iat: Math.floor(Date.now() / 1000)
-        };
-
-        createDpopProof();
+        let callApiBtn = document.getElementById('call_api_btn');
+        callApiBtn.addEventListener('click', () => {            
+            Dpop.callAPI(AccessToken, DpopProofForResource).
+            then((result) => {
+               document.getElementById('apiResponseContent').innerText = result;
+            });
+        });
     </script>
-
 </body>
-
 </html>
