@@ -177,6 +177,21 @@
             color: black;
         }
 
+        .next-section-btn{
+            color: white;
+            padding: 20px;
+            background-color: green;
+            border: solid 2px black;            
+        }
+
+        .actionbtn{
+            color: white;
+            background-color: blue;
+            border: solid 2px black;
+            padding: 20px;
+
+        }
+
     </style>
     
 </head>
@@ -189,9 +204,9 @@
         <h3>Demonstrating Proof of Possession at the application layer</h3>
     </div>
 
-    <div class="section" id="section1">
+    <div class="section" id="section1" itemid="s1">
         <h2 class="expCollapse">
-            <button aria-expanded="false">1. Generating the DPoP proof for the token request
+            <button itemid="expbtn1" aria-expanded="false">1. Generating the DPoP proof for the token request
                 <svg viewBox="0 0 10 10" aria-hidden="true" focusable="false">
                     <rect class="vert" height="8" width="2" y="1" x="4" />
                     <rect height="2" width="8" y="4" x="1" />
@@ -200,7 +215,7 @@
         </h2>
         <div hidden>
             <div>
-                <button id="dpop_proof_btn">Generate the DPoP proof</button>
+                <button class="actionbtn" id="dpop_proof_btn">Generate the DPoP proof</button>
             </div>
             <div class="flex-container">
                 <div id="base64tokenContainer" class="tokenContainer">
@@ -225,12 +240,13 @@
                     <div id="jwtSignature" class="code" contenteditable="true"></div>
                 </div>
             </div>
+            <button class="next-section-btn" itemid="1" >Next: Use the DPoP proof >></button>
         </div>  
     </div>  
     <hr>
     <div class="section" id="section2"> 
         <h2  class="expCollapse">
-            <button aria-expanded="false">2. Using the DPoP proof for the token request
+            <button itemid="expbtn2"  aria-expanded="false">2. Using the DPoP proof for the token request
                 <svg viewBox="0 0 10 10" aria-hidden="true" focusable="false">
                     <rect class="vert" height="8" width="2" y="1" x="4" />
                     <rect height="2" width="8" y="4" x="1" />
@@ -239,7 +255,7 @@
         </h2>
         <div hidden>
             <div>
-                <button id="get_access_token_using_proof">Get the access token using DPoP proof</button>
+                <button class="actionbtn" id="get_access_token_using_proof">Get the access token using DPoP proof</button>
             </div>
             <div class="flex-container">
                 <div id="base64AccessTokenContainer" class="tokenContainer">
@@ -268,12 +284,13 @@
                 <h2>The Access Token hash:</h2>
                 <div id="at_hash"></div>
             </div>
+            <button class="next-section-btn" itemid="2" >Next: Create new DPoP proof for the API >></button>
         </div>
     </div>
     <hr>
     <div class="section" id="section3">
         <h2  class="expCollapse">
-            <button aria-expanded="false">3. Create new DPoP proof that contains Access Token hash
+            <button itemid="expbtn3" aria-expanded="false">3. Create new DPoP proof that contains Access Token hash
                 <svg viewBox="0 0 10 10" aria-hidden="true" focusable="false">
                     <rect class="vert" height="8" width="2" y="1" x="4" />
                     <rect height="2" width="8" y="4" x="1" />
@@ -307,12 +324,13 @@
                     <div id="res_jwtSignature" class="code" contenteditable="true"></div>
                 </div>
             </div>
+            <button class="next-section-btn" itemid="3" >Next: Call the API >></button>
         </div>
     </div>
     <hr>
     <div class="section" id="section4">  
         <h2 class="expCollapse">
-            <button aria-expanded="false">4. Calling the API with DPoP proof and Access Token
+            <button itemid="expbtn4" aria-expanded="false">4. Calling the API with DPoP proof and Access Token
                 <svg viewBox="0 0 10 10" aria-hidden="true" focusable="false">
                     <rect class="vert" height="8" width="2" y="1" x="4" />
                     <rect height="2" width="8" y="4" x="1" />
@@ -332,6 +350,7 @@
             </div>
         </div>    
     </div>
+    <div style="height: 900px;">&nbsp;</div>
     <script type="Module">
         
         import * as Dpop from './main.js';
@@ -392,7 +411,7 @@
 <script>
     (function() {
   const headings = document.querySelectorAll('.expCollapse');
-  console.log(headings.length);
+
   var i = 0;
   Array.prototype.forEach.call(headings, h => {
     let btn = h.querySelector('button');    
@@ -413,7 +432,39 @@
       scrollTo.scrollIntoView();
     }
   });
-})()
+})();
+
+(function() {
+  const btns = document.querySelectorAll('.next-section-btn');
+  Array.prototype.forEach.call(btns, btn => {
+    var itemid = parseInt(btn.getAttribute("itemid"));
+
+    if (itemid==4)
+        exit;
+
+    const headings = document.querySelectorAll('.expCollapse');
+
+    //TODO: add class to select expand-buttons directly
+    Array.prototype.forEach.call(headings, h => {
+        let expBtn = h.querySelector('button');        
+
+        if (expBtn.getAttribute("itemid") !== `expbtn${itemid + 1}`){
+            return;
+        }
+                    
+        let target = h.nextElementSibling;
+    
+        btn.onclick = () => {
+            expBtn.click();
+        }
+
+  });
+
+  });
+
+  
+
+})();
 </script>
 </body>
 </html>
