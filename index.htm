@@ -142,7 +142,6 @@
             color: red;
         }
 
-
         h2 button{
             all: inherit;
             border: 0;
@@ -180,16 +179,16 @@
         .next-section-btn{
             color: white;
             padding: 20px;
-            background-color: green;
+            background-color: gray;
             border: solid 2px black;            
         }
 
         .actionbtn{
             color: white;
-            background-color: blue;
+            background-color: green;
             border: solid 2px black;
             padding: 20px;
-
+            margin-right: 10px;
         }
 
     </style>
@@ -214,9 +213,22 @@
             </button>
         </h2>
         <div hidden>
+           <div>
+               The first step in the DPoP flow is to generate the DPoP proof.
+               The DPoP proof is a JWT that contains some specific information in both the jose header and the payload.
+           </div>
+            <div>                
+                The jose header contains a claim with a jwk structure which contains neccessary information about the key which was used to sign the DPoP proof.<br>
+                The key will be used by the Authorization Server to bind the DPoP proof to the access token.
+           </div>
             <div>
-                <button class="actionbtn" id="dpop_proof_btn">Generate the DPoP proof</button>
-            </div>
+               The payload in the JWT contains some specific claims in the payload that will be used to bind the proof to a resource.<br>
+               These claims are:
+               <ul>
+                   <li>"htm": Indicates the http method that the client will use to request the resource.</li>
+                   <li>"htu": The http uri of the resource that the client wants to request (without query and fragment parts).</li>
+               </ul> 
+           </div>
             <div class="flex-container">
                 <div id="base64tokenContainer" class="tokenContainer">
                     <div class="header">BASE64URL ENCODED TOKEN</div>
@@ -240,13 +252,17 @@
                     <div id="jwtSignature" class="code" contenteditable="true"></div>
                 </div>
             </div>
-            <button class="next-section-btn" itemid="1" >Next: Use the DPoP proof >></button>
+            <div>
+                <button class="actionbtn" id="dpop_proof_btn">Generate the DPoP proof</button>
+                <button class="next-section-btn" itemid="1" >Next: Use the DPoP proof >></button>
+            </div>
+            
         </div>  
     </div>  
     <hr>
     <div class="section" id="section2"> 
         <h2  class="expCollapse">
-            <button itemid="expbtn2"  aria-expanded="false">2. Using the DPoP proof for the token request
+            <button itemid="expbtn2"  aria-expanded="false">2. Requesting a DPoP-bound Access Token
                 <svg viewBox="0 0 10 10" aria-hidden="true" focusable="false">
                     <rect class="vert" height="8" width="2" y="1" x="4" />
                     <rect height="2" width="8" y="4" x="1" />
@@ -254,9 +270,7 @@
             </button>
         </h2>
         <div hidden>
-            <div>
-                <button class="actionbtn" id="get_access_token_using_proof">Get the access token using DPoP proof</button>
-            </div>
+           
             <div class="flex-container">
                 <div id="base64AccessTokenContainer" class="tokenContainer">
                     <div class="header">BASE64URL ENCODED TOKEN</div>
@@ -284,7 +298,10 @@
                 <h2>The Access Token hash:</h2>
                 <div id="at_hash"></div>
             </div>
-            <button class="next-section-btn" itemid="2" >Next: Create new DPoP proof for the API >></button>
+            <div>
+                <button class="actionbtn" id="get_access_token_using_proof">Get the access token using DPoP proof</button><button class="next-section-btn" itemid="2" >Next: Create new DPoP proof for the API >></button>
+            </div>
+            
         </div>
     </div>
     <hr>
@@ -365,6 +382,12 @@
         let dpopProofBtn = document.getElementById('dpop_proof_btn');
 
         dpopProofBtn.addEventListener('click', () => {
+            
+            document.getElementById('dpopProofBase64').innerText = '';
+            document.getElementById('jwtHeader').innerText = '';
+            document.getElementById('jwtPayload').innerText = ''; 
+            document.getElementById('jwtSignature').innerText = '';
+
             Dpop.generateDpopProof(ResourceUrl)
             .then((proof)=>{
                 DpopProofForAs = proof;
