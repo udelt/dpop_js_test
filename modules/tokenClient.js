@@ -16,6 +16,8 @@ export async function getAccessToken(url, dpopProof) {
         });
     
         var jsonResult = JSON.parse(result);
+        var response_type = jsonResult.token_type;
+        console.log(response_type);
         var token = jsonResult.access_token;        
         return token;
 }
