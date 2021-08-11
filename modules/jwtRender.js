@@ -33,10 +33,22 @@ function renderComplexTypeClaim(claim_type, claim_value, document, parent){
 
 function renderSimpleTypeClaim(type, value, indentationLevel, parent, document){
     var container = createClaimContainer(document, indentationLevel);
-    container.appendChild(createClaimTypeNode(type, document));
+    var claimTypeNode = createClaimTypeNode(type, document);
     var claimValueNode = createClaimValueNode(value, document);
-    if (type==="jkt")
+    
+    if (type==="jkt"){
         claimValueNode.classList.add("accentuate");
+        claimTypeNode.classList.add("accentuate");
+    }
+        
+
+    if (type==="htm" || type==="htu")
+    {
+        claimTypeNode.classList.add("notice_payload_claim");
+        claimValueNode.classList.add("notice_payload_claim");
+    }
+        
+    container.appendChild(claimTypeNode);
     container.appendChild(claimValueNode);
     parent.appendChild(container);
     return claimValueNode;

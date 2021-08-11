@@ -1,5 +1,5 @@
 export async function callAPI(accessToken, dpopProof) {
-    var url = "https://localhost:44358/DPoP";
+    var url = "https://dpoptestapi.azurewebsites.net/DPoP";
     var response = await fetch(url, {
             method: 'GET',
             headers: {
@@ -13,7 +13,7 @@ export async function callAPI(accessToken, dpopProof) {
             return json;
         })
         .then(json => {
-            console.log(json);
+            //console.log(JSON.stringify(json));
             return json;
         })
         .catch(function(err){

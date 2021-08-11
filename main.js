@@ -5,7 +5,7 @@ import * as Crypto from './modules/crypto.js';
 import * as Jwt from './modules/jwt.js';
 import * as JwtRenderer from './modules/jwtRender.js'
 
-const tokenEndpointUrl = "https://localhost:5001/connect/token";
+const tokenEndpointUrl = "https://dpopidentityserver.azurewebsites.net/connect/token"; //"https://localhost:5001/connect/token";
 
 var base64DpopProof = undefined;
 

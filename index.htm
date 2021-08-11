@@ -1,198 +1,12 @@
 <!DOCTYPE html>
 <html>
-<meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' https://localhost:10001/;">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline'; connect-src 'self' https://localhost:5001/connect/token https://dpopidentityserver.azurewebsites.net/connect/token https://localhost:44358/DPoP https://dpoptestapi.azurewebsites.net/DPoP; img-src 'self'; style-src 'self' 'unsafe-inline';">
 
 <head>
     <title>DPoP test</title>
-    
-    <style>
-        html body {
-            background-color: white;
-        }
-        
-        h1,
-        h2,
-        h3 {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            text-transform: uppercase;
-            color: slategrey;
-        }
-        
-        .title {
-            padding-left: 100px;
-        }
 
-        .section{
-            margin-left:100px;
-        }
-        
-        .flex-container {
-            background-color: white;
-            display: flex;
-            flex-direction: row;
-            width: 100%;
-            height: auto;
-            justify-content: space-evenly;
-        }
-        
-        .flex-container-code {
-            display: flex;
-            flex-direction: row;
-            width: 100%;
-            height: auto;
-            justify-content: left;
-        }
-        
-        .tokenContainer {
-            margin-top: 10px;
-            margin-bottom: 10px;
-            background-color: white;
-            width: 49%;
-            border: 1px solid lightslategray;
-            border-radius: 4px;
-        }
-        
-        .code {
-            font-size: 10pt;
-            font-family: monospace;
-            tab-size: 4;
-            margin: 0px;
-            padding-left: 15px;
-            padding-right: 15px;
-        }
-        
-        .base64 {
-            font-size: 18pt;
-            font-family: monospace;
-            padding: 10px;
-            overflow-wrap: break-word;
-        }
-
-        .apiResponse{
-            font-size: 10pt;
-            font-family: monospace;
-            tab-size: 4;
-            margin: 0px;
-            padding-left: 15px;
-            padding-right: 15px;
-        }
-        
-        .header {
-            color: slategrey;
-            text-align: center;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            font-size: 22px;
-        }
-        
-        .subtitle {
-            color: slategrey;
-            text-align: center;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            font-size: 18;
-            text-transform: uppercase;
-        }
-        
-        .jwt-header {
-            color: rebeccapurple;
-        }
-        
-        .jwt-payload {
-            color: cornflowerblue;
-        }
-        
-        .jwt-signature {
-            color: coral;
-        }
-        
-        .jwt-part-separator {
-            margin-left: 3px;
-            margin-right: 3px;
-            color: black;
-        }
-        
-        .code-line {
-            word-wrap: break-word;
-            white-space: pre-wrap;
-            word-break: normal;
-        }
-        
-        .claim {
-            text-indent: 0;
-        }
-        
-        .claim_type {
-            font-weight: bold;
-            color: indigo;
-        }
-        
-        .claim_value {
-            font-style: oblique;
-        }
-        
-        .tabx1 {
-            margin-left: 15px;
-        }
-        
-        .tabx2 {
-            margin-left: 30px;
-        }
-
-        .accentuate{
-            font-weight: bold;
-            color: red;
-        }
-
-        h2 button{
-            all: inherit;
-            border: 0;
-            display: flex;
-            justify-content: space-between;
-            width: 100%;
-            padding: 0.5em 0;            
-        }
-
-        h2 button:focus svg {  
-            outline: 1px solid;
-        }
- 
-        button svg {
-            height: 1em;
-            margin-left: 0.5em;
-        }
-        
-        [aria-expanded="true"] .vert {
-            display: none;
-        }
-
-        [aria-expanded] rect {
-            fill: currentColor;
-        }
-
-        [aria-expanded="true"] .vert {
-            display: none;
-        }
-
-        .expCollapse{
-            color: black;
-        }
-
-        .next-section-btn{
-            color: white;
-            padding: 20px;
-            background-color: gray;
-            border: solid 2px black;            
-        }
-
-        .actionbtn{
-            color: white;
-            background-color: green;
-            border: solid 2px black;
-            padding: 20px;
-            margin-right: 10px;
-        }
-
-    </style>
-    
+    <link href="style.css" rel="stylesheet">
+      
 </head>
 
 
@@ -206,29 +20,30 @@
     <div class="section" id="section1" itemid="s1">
         <h2 class="expCollapse">
             <button itemid="expbtn1" aria-expanded="false">1. Generating the DPoP proof for the token request
-                <svg viewBox="0 0 10 10" aria-hidden="true" focusable="false">
+                <svg viewbox="0 0 10 10" aria-hidden="true" focusable="false">
                     <rect class="vert" height="8" width="2" y="1" x="4" />
                     <rect height="2" width="8" y="4" x="1" />
                 </svg> 
             </button>
         </h2>
         <div hidden>
-           <div>
-               The first step in the DPoP flow is to generate the DPoP proof.
-               The DPoP proof is a JWT that contains some specific information in both the jose header and the payload.
-           </div>
-            <div>                
-                The jose header contains a claim with a jwk structure which contains neccessary information about the key which was used to sign the DPoP proof.<br>
-                The key will be used by the Authorization Server to bind the DPoP proof to the access token.
-           </div>
+            <div class="info">
+                <div>
+                    The first step in the DPoP flow is to generate the DPoP proof. The DPoP proof is a JWT that contains some specific information in both the jose header and the payload.
+                    The jose header contains a claim with a jwk structure which contains neccessary information about the key which was used to sign the DPoP proof. This key will be used by the Authorization Server to bind the DPoP proof to the access
+                    token.
+                </div>
+                <div style="margin-top: 10px;">
+                    The payload in the JWT contains claims that will be used to bind the proof to a resource.<br> These claims are:
+                    <ul>
+                        <li><span class="notice_payload_claim">"htm"</span>: Indicates the http method that the client will use to request the resource.</li>
+                        <li><span class="notice_payload_claim">"htu"</span>: The http uri of the resource that the client wants to request (without query and fragment parts).</li>
+                    </ul>
+                </div>
+            </div>
             <div>
-               The payload in the JWT contains some specific claims in the payload that will be used to bind the proof to a resource.<br>
-               These claims are:
-               <ul>
-                   <li>"htm": Indicates the http method that the client will use to request the resource.</li>
-                   <li>"htu": The http uri of the resource that the client wants to request (without query and fragment parts).</li>
-               </ul> 
-           </div>
+                <button class="actionbtn" id="dpop_proof_btn">Demo: Generate the DPoP proof</button>                
+            </div>
             <div class="flex-container">
                 <div id="base64tokenContainer" class="tokenContainer">
                     <div class="header">BASE64URL ENCODED TOKEN</div>
@@ -249,36 +64,51 @@
                     <hr>
                     <div class="subtitle">Signature:</div>
                     <hr>
-                    <div id="jwtSignature" class="code" contenteditable="true"></div>
+                    <div id="jwtSignature" class="code signature" contenteditable="true"></div>
                 </div>
             </div>
             <div>
-                <button class="actionbtn" id="dpop_proof_btn">Generate the DPoP proof</button>
-                <button class="next-section-btn" itemid="1" >Next: Use the DPoP proof >></button>
+                <button class="next-section-btn" itemid="1">Next: Use the DPoP proof >></button>
             </div>
-            
-        </div>  
-    </div>  
+
+        </div>
+    </div>
     <hr>
-    <div class="section" id="section2"> 
-        <h2  class="expCollapse">
-            <button itemid="expbtn2"  aria-expanded="false">2. Requesting a DPoP-bound Access Token
-                <svg viewBox="0 0 10 10" aria-hidden="true" focusable="false">
+    <div class="section" id="section2">
+        <h2 class="expCollapse">
+            <button itemid="expbtn2" aria-expanded="false">2. Requesting a DPoP-bound Access Token
+                <svg viewbox="0 0 10 10" aria-hidden="true" focusable="false">
                     <rect class="vert" height="8" width="2" y="1" x="4" />
                     <rect height="2" width="8" y="4" x="1" />
                 </svg> 
             </button>
         </h2>
         <div hidden>
-           
+            <div class="info">
+                <div>
+                    The second step in the DPoP flow is to request an Access Token from the Authorization Server. <br>The client now adds the DPoP proof it created in the previous step to the request it makes to Duende IdentityServer.
+                    The DPoP proof is added to the DPoP http header in the request.<br><br>
+                    
+                </div>
+                <div style="margin-top: 10px;">Duende IdentityServer will grab the public key from the jwk in the DPoP proof it received, and will then bind the DPoP proof to the Access Token by adding a thumbprint in the payload of the JWT.</div>
+                <div style="margin-top: 10px;">
+                    The thumbrint in the JWT Access Token is placed in the JWT payload:<br>
+                    <ul>
+                        <li><span class="notice_payload_claim">"jkt"</span>: The thumbprint of the public key in the DPoP proof.</li>
+                    </ul>
+                </div>
+            </div>
+            <div>
+                <button class="actionbtn" id="get_access_token_using_proof">Demo: Get the Access Token using DPoP proof</button>
+            </div>
             <div class="flex-container">
-                <div id="base64AccessTokenContainer" class="tokenContainer">
+                <div id="base64AccessTokenContainer2" class="tokenContainer">
                     <div class="header">BASE64URL ENCODED TOKEN</div>
                     <hr>
                     <div id="accessTokenBase64" class="base64" contenteditable="true"></div>
                 </div>
 
-                <div id="jsonAccessTokenContainer" class="tokenContainer">
+                <div id="jsonAccessTokenContainer2" class="tokenContainer">
                     <div class="header">JSON FORMATTED TOKEN</div>
                     <hr>
                     <div class="subtitle">Jose header:</div>
@@ -291,41 +121,58 @@
                     <hr>
                     <div class="subtitle">Signature:</div>
                     <hr>
-                    <div id="at_jwtSignature" class="code" contenteditable="true"></div>
+                    <div id="at_jwtSignature" class="code signature" contenteditable="true"></div>
                 </div>
             </div>
             <div>
                 <h2>The Access Token hash:</h2>
-                <div id="at_hash"></div>
+                <div class="info">The API must be able to verify that the DPoP proof it receives from the client is bound to the Access Token</div>
+                <div class="info">
+                    To bind the Access Token to the DPoP proof the client has to calculate a hash of the Access Token. This hash must be included in the new DPoP proof that will be generated for the API.
+                </div>
+                
+                <div class="access_token_hash" id="at_hash"></div>
             </div>
             <div>
-                <button class="actionbtn" id="get_access_token_using_proof">Get the access token using DPoP proof</button><button class="next-section-btn" itemid="2" >Next: Create new DPoP proof for the API >></button>
+               <button class="next-section-btn" itemid="2">Next: Create new DPoP proof for the API &rarr;</button>
             </div>
-            
         </div>
     </div>
     <hr>
     <div class="section" id="section3">
-        <h2  class="expCollapse">
+        <h2 class="expCollapse">
             <button itemid="expbtn3" aria-expanded="false">3. Create new DPoP proof that contains Access Token hash
-                <svg viewBox="0 0 10 10" aria-hidden="true" focusable="false">
+                <svg viewbox="0 0 10 10" aria-hidden="true" focusable="false">
                     <rect class="vert" height="8" width="2" y="1" x="4" />
                     <rect height="2" width="8" y="4" x="1" />
                 </svg> 
             </button>
         </h2>
         <div hidden>
+            <div class="info">
+                <div>
+                    Now that we have the Access Token hash we can create the new DPoP proof.
+                </div>
+                <div>
+                    The DPoP proof we create for the API will contain a claim called <span class="notice_payload_claim">ath</span>. The claim value is the hash of the Access Token.
+                </div>
+                <div>
+                    We will use the new DPoP proof when we request the resource at the API in combination with the Access Token, and these tokens are now bound together.
+                </div>
+                
+                To be more specific: the Access Token is bound to the public key in the DPoP proof, and the DPoP proof is bound to the Access Token..<br>
+            </div>
             <div>
-                <button id="api_btn">Call the access token with a new DPoP proof and the Access Token</button>
+                <button class="actionbtn" id="api_btn">Demo: Create a new DPoP proof for the API</button>
             </div>
             <div class="flex-container">
-                <div id="base64AccessTokenContainer" class="tokenContainer">
+                <div id="base64AccessTokenContainer3" class="tokenContainer">
                     <div class="header">BASE64URL ENCODED TOKEN</div>
                     <hr>
                     <div id="dpopProofResourceBase64" class="base64" contenteditable="true"></div>
                 </div>
 
-                <div id="jsonAccessTokenContainer" class="tokenContainer">
+                <div id="jsonAccessTokenContainer3" class="tokenContainer">
                     <div class="header">JSON FORMATTED TOKEN</div>
                     <hr>
                     <div class="subtitle">Jose header:</div>
@@ -338,156 +185,178 @@
                     <hr>
                     <div class="subtitle">Signature:</div>
                     <hr>
-                    <div id="res_jwtSignature" class="code" contenteditable="true"></div>
+                    <div id="res_jwtSignature" class="code signature" contenteditable="true"></div>
                 </div>
             </div>
-            <button class="next-section-btn" itemid="3" >Next: Call the API >></button>
+            <button class="next-section-btn" itemid="3">Next: Call the API >></button>
         </div>
     </div>
     <hr>
-    <div class="section" id="section4">  
+    <div class="section" id="section4">
         <h2 class="expCollapse">
             <button itemid="expbtn4" aria-expanded="false">4. Calling the API with DPoP proof and Access Token
-                <svg viewBox="0 0 10 10" aria-hidden="true" focusable="false">
+                <svg viewbox="0 0 10 10" aria-hidden="true" focusable="false">
                     <rect class="vert" height="8" width="2" y="1" x="4" />
                     <rect height="2" width="8" y="4" x="1" />
                 </svg> 
             </button>
-        </h2>            
+        </h2>
         <div hidden>
+            <div class="info">
+                <div>
+                    Now that we have both the Access Token and the new DPoP proof which are cryptographically bound to each other, we can attach the tokens when we request the resource at the API.
+                </div>
+                <div>
+                    We add the two tokens as the http header values "Authorization" and "DPoP".
+                </div>
+                <br>
+                So, the API will receive the following:
+                <ul>
+                    <li>An Access Token that contains the thumbrprint of the public key from the DPoP proof used in the token request</li>
+                    <li>A new DPoP proof that contains the same public key that was used when calling Duende IdentityServer</li>
+                    <li>A hash of the Access Token in the new DPoP proof</li>
+                </ul>                     
+
+            </div>
             <div>
-                <button id="call_api_btn">Call the API with the new DPoP proof and the Access Token</button>
+                <button class="actionbtn" id="call_api_btn">Demo: Call the API with the new DPoP proof and the Access Token</button>
             </div>
             <div class="flex-container">
-                <div id="base64AccessTokenContainer" class="tokenContainer">
+                <div id="ApiContainer4" class="tokenContainer">
                     <div class="header">Response data</div>
                     <hr>
                     <div id="apiResponseContent" class="apiResponse" contenteditable="true"></div>
                 </div>
             </div>
-        </div>    
+        </div>
     </div>
     <div style="height: 900px;">&nbsp;</div>
     <script type="Module">
-        
-        import * as Dpop from './main.js';
-        window.Dpop = Dpop;
-        let DpopProofForAs = null;
-        let DpopProofForResource = null;
-        let AccessToken = null;
-        let AccessTokenHash = null;
 
-        const ResourceUrl = "https://localhost:44358/DPoP"
-        
+        import * as Dpop from './main.js'; 
+        window.Dpop = Dpop; 
+        let DpopProofForAs = null; 
+        let DpopProofForResource = null; 
+        let AccessToken = null; 
+        let AccessTokenHash = null; 
+        const ResourceUrl = "https://dpoptestapi.azurewebsites.net/DPoP"; //"https://localhost:44358/DPoP"; 
         let dpopProofBtn = document.getElementById('dpop_proof_btn');
 
-        dpopProofBtn.addEventListener('click', () => {
-            
-            document.getElementById('dpopProofBase64').innerText = '';
-            document.getElementById('jwtHeader').innerText = '';
+        dpopProofBtn.addEventListener('click', () => { 
+            document.getElementById('dpopProofBase64').innerText = ''; 
+            document.getElementById('jwtHeader').innerText = ''; 
             document.getElementById('jwtPayload').innerText = ''; 
-            document.getElementById('jwtSignature').innerText = '';
+            document.getElementById('jwtSignature').innerText = ''; 
+            Dpop.generateDpopProof(ResourceUrl) .then((proof)=>{ 
+                DpopProofForAs = proof; 
+                Dpop.renderBase64DpopProof(document, document.getElementById('dpopProofBase64'), proof.dpopProof); 
+                Dpop.renderJwt(document, proof.dpopProof, document.getElementById('jwtHeader'), document.getElementById('jwtPayload'), document.getElementById('jwtSignature')); 
+                
+            }); 
+        }); 
 
-            Dpop.generateDpopProof(ResourceUrl)
-            .then((proof)=>{
-                DpopProofForAs = proof;
-                Dpop.renderBase64DpopProof(document, document.getElementById('dpopProofBase64'), proof.dpopProof);
-                Dpop.renderJwt(document, proof.dpopProof, document.getElementById('jwtHeader'), document.getElementById('jwtPayload'), document.getElementById('jwtSignature'));
-            });
-        });
-
-        let tokenBtn = document.getElementById('get_access_token_using_proof');
-        tokenBtn.addEventListener('click', () => {            
-            Dpop.getAccessToken("https://localhost:5001/connect/token", DpopProofForAs.dpopProof)
-            .then((accessToken) => {
-                AccessToken = accessToken;
-                Dpop.renderBase64DpopProof(document, document.getElementById('accessTokenBase64'), accessToken);
-                Dpop.renderJwt(document, accessToken, document.getElementById('at_jwtHeader'), document.getElementById('at_jwtPayload'), document.getElementById('at_jwtSignature'));
-                Dpop.getAccessTokenHash(accessToken)
-                .then((hash) => {
-                    AccessTokenHash = hash;
-                    document.getElementById('at_hash').innerText = hash;                    
-                });
-            });
-        });
-
-        let apiBtn = document.getElementById('api_btn');
-        apiBtn.addEventListener('click', () => {
-            Dpop.generateDpopProofForResource(AccessTokenHash, DpopProofForAs, ResourceUrl).
-            then((proof) => {
-                DpopProofForResource = proof;
-                console.log(proof);
-                Dpop.renderBase64DpopProof(document, document.getElementById('dpopProofResourceBase64'), proof.dpopProof);
+        let tokenBtn = document.getElementById('get_access_token_using_proof'); 
+        tokenBtn.addEventListener('click', () => { 
+            Dpop.getAccessToken("https://dpopidentityserver.azurewebsites.net/connect/token", DpopProofForAs.dpopProof) 
+            .then((accessToken) => { 
+                AccessToken = accessToken; 
+                Dpop.renderBase64DpopProof(document, document.getElementById('accessTokenBase64'), accessToken); 
+                Dpop.renderJwt(document, accessToken, document.getElementById('at_jwtHeader'), document.getElementById('at_jwtPayload'), document.getElementById('at_jwtSignature')); 
+                Dpop.getAccessTokenHash(accessToken) .then((hash) => { 
+                    AccessTokenHash = hash; document.getElementById('at_hash').innerText = hash; 
+                }); 
+            }); 
+        }); 
+        
+        let apiBtn = document.getElementById('api_btn'); 
+        apiBtn.addEventListener('click', () => { 
+                Dpop.generateDpopProofForResource(AccessTokenHash, DpopProofForAs, ResourceUrl)
+            .then((proof) => { 
+                DpopProofForResource = proof; console.log(proof); Dpop.renderBase64DpopProof(document, document.getElementById('dpopProofResourceBase64'), proof.dpopProof); 
                 Dpop.renderJwt(document, proof.dpopProof, document.getElementById('res_jwtHeader'), document.getElementById('res_jwtPayload'), document.getElementById('res_jwtSignature'));
-            })
-        });
+            }) 
+        }); 
 
-        let callApiBtn = document.getElementById('call_api_btn');
-        callApiBtn.addEventListener('click', () => {            
-            Dpop.callAPI(AccessToken, DpopProofForResource).
-            then((result) => {
-               document.getElementById('apiResponseContent').innerText = result;
+        let callApiBtn = document.getElementById('call_api_btn'); 
+        callApiBtn.addEventListener('click', () => { 
+            Dpop.callAPI(AccessToken, DpopProofForResource).then((jsonResult) => {                 
+                
+                var json = JSON.parse(JSON.stringify(jsonResult));
+
+                for (const [key, value] of Object.entries(json)){
+                        var text = document.createElement("div");
+                        text.innerText = `${key}: ${value}`;
+                        document.getElementById('apiResponseContent').appendChild(text);
+                };
+                // json.forEach(property => {
+                //     Object.entries(property).forEeach(([key], [value]) => {
+                //         //console.log(`${key}: ${value}`);
+                //         var text = document.createElement("div");
+                //         text.innerText = `${key}: ${value}`;
+                //         document.getElementById('apiResponseContent').appendChild(text);
+                //     });                    
+                // });                                
             });
-        });
+        }); 
+    
     </script>
 
-<script>
-    (function() {
-  const headings = document.querySelectorAll('.expCollapse');
+    <script>
+        (function() {
+            const headings = document.querySelectorAll('.expCollapse');
 
-  var i = 0;
-  Array.prototype.forEach.call(headings, h => {
-    let btn = h.querySelector('button');    
-    let target = h.nextElementSibling;
-    i++;
-    try{
-        var scrollTo = document.getElementById(`section${i}`)        
-    }catch(err)
-    {
-        console.error(err);
-    }
-    
-    btn.onclick = () => {
-      let expanded = btn.getAttribute('aria-expanded') === 'true';
+            var i = 0;
+            Array.prototype.forEach.call(headings, h => {
+                let btn = h.querySelector('button');
+                let target = h.nextElementSibling;
+                i++;
+                try {
+                    var scrollTo = document.getElementById(`section${i}`)
+                } catch (err) {
+                    console.error(err);
+                }
 
-      btn.setAttribute('aria-expanded', !expanded);
-      target.hidden = expanded;
-      scrollTo.scrollIntoView();
-    }
-  });
-})();
+                btn.onclick = () => {
+                    let expanded = btn.getAttribute('aria-expanded') === 'true';
 
-(function() {
-  const btns = document.querySelectorAll('.next-section-btn');
-  Array.prototype.forEach.call(btns, btn => {
-    var itemid = parseInt(btn.getAttribute("itemid"));
+                    btn.setAttribute('aria-expanded', !expanded);
+                    target.hidden = expanded;
+                    scrollTo.scrollIntoView();
+                }
+            });
+        })();
 
-    if (itemid==4)
-        exit;
+        (function() {
+            const btns = document.querySelectorAll('.next-section-btn');
+            Array.prototype.forEach.call(btns, btn => {
+                var itemid = parseInt(btn.getAttribute("itemid"));
 
-    const headings = document.querySelectorAll('.expCollapse');
+                if (itemid == 4)
+                    exit;
 
-    //TODO: add class to select expand-buttons directly
-    Array.prototype.forEach.call(headings, h => {
-        let expBtn = h.querySelector('button');        
+                const headings = document.querySelectorAll('.expCollapse');
 
-        if (expBtn.getAttribute("itemid") !== `expbtn${itemid + 1}`){
-            return;
-        }
-                    
-        let target = h.nextElementSibling;
-    
-        btn.onclick = () => {
-            expBtn.click();
-        }
+                //TODO: add class to select expand-buttons directly
+                Array.prototype.forEach.call(headings, h => {
+                    let expBtn = h.querySelector('button');
 
-  });
+                    if (expBtn.getAttribute("itemid") !== `expbtn${itemid + 1}`) {
+                        return;
+                    }
 
-  });
+                    let target = h.nextElementSibling;
 
-  
+                    btn.onclick = () => {
+                        expBtn.click();
+                    }
 
-})();
-</script>
+                });
+
+            });
+        })();
+
+        window.scro
+    </script>
 </body>
+
 </html>
