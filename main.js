@@ -6,11 +6,11 @@ import * as Jwt from './modules/jwt.js';
 import * as JwtRenderer from './modules/jwtRender.js'
 
 const tokenEndpointUrl = "https://dpopidentityserver.azurewebsites.net/connect/token"; //"https://localhost:5001/connect/token";
+const resourceUrl = "https://dpoptestapi.azurewebsites.net/DPoP";
 
 var base64DpopProof = undefined;
 
-export async function start()
-{
+export async function start() {
     var dpop_proof_for_as = await DPOP.createDpopProof();
     base64DpopProof = dpop_proof_for_as;
 
@@ -32,44 +32,43 @@ export async function start()
 
     console.log(apiResult);
 
-    return {enc: encodedAT, str: ATasString};
+    return { enc: encodedAT, str: ATasString };
 }
 
-export async function generateDpopProof(resourceUrl){
-    var dpop_proof_for_as = await DPOP.createDpopProof(null, null, null, resourceUrl);
+export async function generateDpopProof() {
+    var dpop_proof_for_as = await DPOP.createDpopProof(null, null, null, tokenEndpointUrl);
     return dpop_proof_for_as;
 }
 
-export async function getAccessToken(tokenEndpointUri, dpopProof){
-    var accessToken = await TokenClient.getAccessToken(tokenEndpointUri, dpopProof);
+export async function getAccessToken(dpopProof) {
+    var accessToken = await TokenClient.getAccessToken(tokenEndpointUrl, dpopProof);
     return accessToken;
 }
 
-export async function getAccessTokenHash(accessToken){
-    var atHash = await Crypto.createHash(accessToken, true);
+export async function getAccessTokenHash(accessToken) {
+    var atHash = await Crypto.createHash(accessToken, true);    
     return atHash;
 }
 
-export async function generateDpopProofForResource(accessTokenHash, dpop_proof_for_as, resourceUrl){
+export async function generateDpopProofForResource(accessTokenHash, dpop_proof_for_as) {
     var dpop_proof_for_resource = await DPOP.createDpopProof(accessTokenHash, dpop_proof_for_as.jwk, dpop_proof_for_as.key, resourceUrl);
     return dpop_proof_for_resource;
 }
 
-export async function callAPI(accessToken, dpop_proof_for_resource){
-    var apiResult = await API.callAPI(accessToken, dpop_proof_for_resource.dpopProof);
+export async function callAPI(accessToken, dpop_proof_for_resource) {
+    var apiResult = await API.callAPI(accessToken, dpop_proof_for_resource.dpopProof, resourceUrl);
     return apiResult;
 }
 
-export function getAccessTokenParts(accessToken)
-{
+export function getAccessTokenParts(accessToken) {
     var encodedAT = `${parts.header}.${parts.payload}.${parts.signature}`;
     var ATasString = `${partsAsString.header}.${partsAsString.payload}.${partsAsString.signature}`;
 
-    return {encoded: encodedAT, asString: ATasString};
+    return { encoded: encodedAT, asString: ATasString };
 }
 
-export function renderBase64DpopProof(document, element, token){
-    
+export function renderBase64DpopProof(document, element, token) {
+
     var parts = token.split(".");
 
     var headerTextNode = document.createTextNode(parts[0]);
@@ -94,7 +93,6 @@ export function renderBase64DpopProof(document, element, token){
     separatorSpan1.appendChild(document.createTextNode("."));
     separatorSpan2.appendChild(document.createTextNode("."));
 
-
     element.appendChild(headerSpan);
     element.appendChild(separatorSpan1);
     element.appendChild(payloadSpan);
@@ -102,7 +100,7 @@ export function renderBase64DpopProof(document, element, token){
     element.appendChild(signatureSpan);
 }
 
-export function renderJwt(document, token, headerElement, payloadElement, signatureElement){
+export function renderJwt(document, token, headerElement, payloadElement, signatureElement) {
     var parts = Jwt.getParts(token);
 
     var header = Jwt.partToJson(parts.header);
@@ -116,10 +114,8 @@ export function renderJwt(document, token, headerElement, payloadElement, signat
     signatureElement.appendChild(jwtSignature);
 }
 
-function renderJwtSignature(document, signature){
+function renderJwtSignature(document, signature) {
     var container = document.createElement("div");
     container.appendChild(document.createTextNode(signature));
     return container;
 }
-
-

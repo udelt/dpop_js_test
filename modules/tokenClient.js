@@ -13,11 +13,10 @@ export async function getAccessToken(url, dpopProof) {
         })
         .catch(function(error) {
             console.log(error);
+            throw(error);
         });
     
         var jsonResult = JSON.parse(result);
-        var response_type = jsonResult.token_type;
-        console.log(response_type);
         var token = jsonResult.access_token;        
         return token;
 }

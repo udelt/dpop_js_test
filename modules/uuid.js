@@ -1,4 +1,4 @@
-async function generate() {
+export async function generate() {
     function randomDigit() {
         if (crypto && crypto.getRandomValues) {
             var randomdata = new Uint8Array(1);

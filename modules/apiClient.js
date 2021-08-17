@@ -1,6 +1,5 @@
-export async function callAPI(accessToken, dpopProof) {
-    var url = "https://dpoptestapi.azurewebsites.net/DPoP";
-    var response = await fetch(url, {
+export async function callAPI(accessToken, dpopProof, resourceUrl) {    
+    var response = await fetch(resourceUrl, {
             method: 'GET',
             headers: {
                 'DPOP': dpopProof,
@@ -11,11 +10,7 @@ export async function callAPI(accessToken, dpopProof) {
         .then(response => {
             var json = response.json();            
             return json;
-        })
-        .then(json => {
-            //console.log(JSON.stringify(json));
-            return json;
-        })
+        })        
         .catch(function(err){
             console.error(err);
         });

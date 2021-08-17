@@ -11,7 +11,7 @@ export async function createDpopProof(atHash, jwk, key, resourceUrl) {
     };
     
     var dpop_proof_payload = {
-        jti: await uuid.generate,
+        jti: await uuid.generate(),
         htm: "POST",
         htu: resourceUrl,
         iat: Math.floor(Date.now() / 1000)
@@ -42,13 +42,4 @@ export async function createDpopProof(atHash, jwk, key, resourceUrl) {
 
     return { dpopProof: dpopProof, key: key, jwk: jwk};
     
-}
-
-
-
-async function OnJwkCreated(jwk) {
-    dpopProof.jwk = jwk;
-    header.jwk = dpopProof.jwk;    
-    callTokenEndpoint();
-
 }

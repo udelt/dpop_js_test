@@ -11,12 +11,27 @@
 
 
 <body>
+<div id="loaderContainer" class="loaderContainer">
+    <div class="loader">
+        <div id="loadingText" class="loaderText">Fetching data..<br> please wait :)</div>
+    </div>
 
+    
+    
+</div>
     <div class="title">
         <h1>DPoP</h1>
         <h3>Demonstrating Proof of Possession at the application layer</h3>
     </div>
-
+    <div class="info-title">
+        <div class="info">
+            This demo is broken down into the individual steps of the DPoP flow to show how the mechanism works.<br>
+            In a real-life production scenario the mechanism will be handled by a library, and the steps will not be noticeable to the user.
+        </div>
+        <div class="info" style="margin-top: 15px;">
+            PS! The Authorization Server (Duende IdentityServer) and the API are running on "cold" and shared Azure instances so you might have to wait a while for the requests to complete. 
+        </div>    
+    </div>
     <div class="section" id="section1" itemid="s1">
         <h2 class="expCollapse">
             <button itemid="expbtn1" aria-expanded="false">1. Generating the DPoP proof for the token request
@@ -28,18 +43,8 @@
         </h2>
         <div hidden>
             <div class="info">
-                <div>
-                    The first step in the DPoP flow is to generate the DPoP proof. The DPoP proof is a JWT that contains some specific information in both the jose header and the payload.
-                    The jose header contains a claim with a jwk structure which contains neccessary information about the key which was used to sign the DPoP proof. This key will be used by the Authorization Server to bind the DPoP proof to the access
-                    token.
-                </div>
-                <div style="margin-top: 10px;">
-                    The payload in the JWT contains claims that will be used to bind the proof to a resource.<br> These claims are:
-                    <ul>
-                        <li><span class="notice_payload_claim">"htm"</span>: Indicates the http method that the client will use to request the resource.</li>
-                        <li><span class="notice_payload_claim">"htu"</span>: The http uri of the resource that the client wants to request (without query and fragment parts).</li>
-                    </ul>
-                </div>
+                    The first step in the DPoP flow is to generate the <em>DPoP proof</em>. <br>
+                    The DPoP proof is a <em>Json Web Token</em> that contains some specific information in both the jose header and the payload that is used in the DPoP flow.<br><br>
             </div>
             <div>
                 <button class="actionbtn" id="dpop_proof_btn">Demo: Generate the DPoP proof</button>                
@@ -65,6 +70,20 @@
                     <div class="subtitle">Signature:</div>
                     <hr>
                     <div id="jwtSignature" class="code signature" contenteditable="true"></div>
+                </div>
+            </div>
+            <div id="dpopResult1" style="display:none">
+                <div class="info" style="margin-top: 10px">
+                    As you can see above in the DPoP proof that just got generated, the jose header contains a claim with a <span class="notice_payload_claim">jwk structure</span> which contains neccessary information about the key which was used to sign the DPoP proof.<br>
+                    This key will be used by the Authorization Server to bind the DPoP proof to the access token.
+                </div>
+                <div class="info" style="margin-top: 10px;">
+                    The payload in the JWT contains claims that will be used to bind the proof to a resource.<br> 
+                    These claims are:
+                    <ul>
+                        <li><span class="notice_payload_claim">"htm"</span>: Indicates the http method that the client will use to request the resource.</li>
+                        <li><span class="notice_payload_claim">"htu"</span>: The http uri of the resource that the client wants to request (without query and fragment parts).</li>
+                    </ul>
                 </div>
             </div>
             <div>
@@ -123,16 +142,7 @@
                     <hr>
                     <div id="at_jwtSignature" class="code signature" contenteditable="true"></div>
                 </div>
-            </div>
-            <div>
-                <h2>The Access Token hash:</h2>
-                <div class="info">The API must be able to verify that the DPoP proof it receives from the client is bound to the Access Token</div>
-                <div class="info">
-                    To bind the Access Token to the DPoP proof the client has to calculate a hash of the Access Token. This hash must be included in the new DPoP proof that will be generated for the API.
-                </div>
-                
-                <div class="access_token_hash" id="at_hash"></div>
-            </div>
+            </div>            
             <div>
                <button class="next-section-btn" itemid="2">Next: Create new DPoP proof for the API &rarr;</button>
             </div>
@@ -141,7 +151,39 @@
     <hr>
     <div class="section" id="section3">
         <h2 class="expCollapse">
-            <button itemid="expbtn3" aria-expanded="false">3. Create new DPoP proof that contains Access Token hash
+            <button itemid="expbtn3" aria-expanded="false">3. Calculating the hash of the Access Token
+                <svg viewbox="0 0 10 10" aria-hidden="true" focusable="false">
+                    <rect class="vert" height="8" width="2" y="1" x="4" />
+                    <rect height="2" width="8" y="4" x="1" />
+                </svg> 
+            </button>
+        </h2>
+        <div hidden>
+            <div class="info">The API must be able to verify that the DPoP proof is bound to the Access Token it receives from the client.</div>
+            <div class="info">
+                    So, the third step in the DPoP flow is to calculate the hash of the Access Token that the client received from the Authorization Server.                     
+            </div>
+            <div class="info">
+                When we have the hash we need to include it the new DPoP proof that will be generated for the API.
+            </div>
+
+            <div style="margin-bottom: 10px;">
+                <button class="actionbtn" id="ath_btn">Demo: Calculate the hash of the Access Token</button>
+            </div>
+            <div id="accessTokenHash_result">
+                <h2>The Access Token hash:</h2>
+                
+                <div class="access_token_hash" id="at_hash"></div>
+            </div>
+            <div>
+               <button class="next-section-btn" itemid="3">Next: Create new DPoP proof for the API &rarr;</button>
+            </div>
+        </div>
+    </div>
+    <hr>
+    <div class="section" id="section4">
+        <h2 class="expCollapse">
+            <button itemid="expbtn4" aria-expanded="false">4. Create new DPoP proof that contains Access Token hash
                 <svg viewbox="0 0 10 10" aria-hidden="true" focusable="false">
                     <rect class="vert" height="8" width="2" y="1" x="4" />
                     <rect height="2" width="8" y="4" x="1" />
@@ -188,13 +230,13 @@
                     <div id="res_jwtSignature" class="code signature" contenteditable="true"></div>
                 </div>
             </div>
-            <button class="next-section-btn" itemid="3">Next: Call the API >></button>
+            <button class="next-section-btn" itemid="4">Next: Call the API >></button>
         </div>
     </div>
     <hr>
-    <div class="section" id="section4">
+    <div class="section" id="section5">
         <h2 class="expCollapse">
-            <button itemid="expbtn4" aria-expanded="false">4. Calling the API with DPoP proof and Access Token
+            <button itemid="expbtn5" aria-expanded="false">5. Calling the API with DPoP proof and Access Token
                 <svg viewbox="0 0 10 10" aria-hidden="true" focusable="false">
                     <rect class="vert" height="8" width="2" y="1" x="4" />
                     <rect height="2" width="8" y="4" x="1" />
@@ -210,9 +252,9 @@
                     We add the two tokens as the http header values "Authorization" and "DPoP".
                 </div>
                 <br>
-                So, the API will receive the following:
+                The API will receive the following:
                 <ul>
-                    <li>An Access Token that contains the thumbrprint of the public key from the DPoP proof used in the token request</li>
+                    <li>An Access Token that contains the thumbprint of the public key from the DPoP proof used in the token request</li>
                     <li>A new DPoP proof that contains the same public key that was used when calling Duende IdentityServer</li>
                     <li>A hash of the Access Token in the new DPoP proof</li>
                 </ul>                     
@@ -221,16 +263,14 @@
             <div>
                 <button class="actionbtn" id="call_api_btn">Demo: Call the API with the new DPoP proof and the Access Token</button>
             </div>
-            <div class="flex-container">
-                <div id="ApiContainer4" class="tokenContainer">
-                    <div class="header">Response data</div>
-                    <hr>
-                    <div id="apiResponseContent" class="apiResponse" contenteditable="true"></div>
-                </div>
+            <div id="ApiContainer4" class="apiResultContainer">
+                <div class="header">Response from API</div>
+                <hr>
+                <div id="apiResponseContent" class="apiResponse" contenteditable="false"></div>
             </div>
         </div>
     </div>
-    <div style="height: 900px;">&nbsp;</div>
+    
     <script type="Module">
 
         import * as Dpop from './main.js'; 
@@ -239,7 +279,7 @@
         let DpopProofForResource = null; 
         let AccessToken = null; 
         let AccessTokenHash = null; 
-        const ResourceUrl = "https://dpoptestapi.azurewebsites.net/DPoP"; //"https://localhost:44358/DPoP"; 
+        //const ResourceUrl = "https://dpoptestapi.azurewebsites.net/DPoP";
         let dpopProofBtn = document.getElementById('dpop_proof_btn');
 
         dpopProofBtn.addEventListener('click', () => { 
@@ -247,55 +287,96 @@
             document.getElementById('jwtHeader').innerText = ''; 
             document.getElementById('jwtPayload').innerText = ''; 
             document.getElementById('jwtSignature').innerText = ''; 
-            Dpop.generateDpopProof(ResourceUrl) .then((proof)=>{ 
+            Dpop.generateDpopProof() .then((proof)=>{ 
                 DpopProofForAs = proof; 
                 Dpop.renderBase64DpopProof(document, document.getElementById('dpopProofBase64'), proof.dpopProof); 
                 Dpop.renderJwt(document, proof.dpopProof, document.getElementById('jwtHeader'), document.getElementById('jwtPayload'), document.getElementById('jwtSignature')); 
-                
+                document.getElementById('dpopResult1').style.display = 'block';
             }); 
         }); 
 
         let tokenBtn = document.getElementById('get_access_token_using_proof'); 
         tokenBtn.addEventListener('click', () => { 
-            Dpop.getAccessToken("https://dpopidentityserver.azurewebsites.net/connect/token", DpopProofForAs.dpopProof) 
+            document.getElementById('loaderContainer').style.display = 'block';
+            document.getElementById('at_jwtHeader').innerText = '';
+            document.getElementById('at_jwtPayload').innerText = '';
+            document.getElementById('at_jwtSignature').innerText = '';
+            document.getElementById('accessTokenBase64').innerText = '';
+
+            Dpop.getAccessToken(DpopProofForAs.dpopProof) 
             .then((accessToken) => { 
                 AccessToken = accessToken; 
                 Dpop.renderBase64DpopProof(document, document.getElementById('accessTokenBase64'), accessToken); 
                 Dpop.renderJwt(document, accessToken, document.getElementById('at_jwtHeader'), document.getElementById('at_jwtPayload'), document.getElementById('at_jwtSignature')); 
-                Dpop.getAccessTokenHash(accessToken) .then((hash) => { 
-                    AccessTokenHash = hash; document.getElementById('at_hash').innerText = hash; 
-                }); 
+                document.getElementById('loaderContainer').style.display = 'none';
+            })
+            .catch(function(err){
+                document.getElementById('loaderContainer').style.display = 'none';                
+                document.getElementById('accessTokenBase64').innerText = err;
             }); 
         }); 
+
+        let athBtn = document.getElementById('ath_btn');
+        athBtn.addEventListener('click', () => {
+            console.log('getting ath');
+            Dpop.getAccessTokenHash(AccessToken) 
+            .then((hash) => { 
+                var ath = document.getElementById('accessTokenHash_result');
+                console.log(ath);
+                console.log(ath.hidden);
+                ath.hidden = false;
+
+                console.log(hash);
+                AccessTokenHash = hash; 
+                document.getElementById('at_hash').innerText = hash; 
+                    
+            })
+            .catch(function(err){
+                document.getElementById('at_hash').innerText = err;
+            }); 
+        });
         
         let apiBtn = document.getElementById('api_btn'); 
         apiBtn.addEventListener('click', () => { 
-                Dpop.generateDpopProofForResource(AccessTokenHash, DpopProofForAs, ResourceUrl)
+                document.getElementById('dpopProofResourceBase64').innerText = '';
+                document.getElementById('res_jwtHeader').innerText = '';
+                document.getElementById('res_jwtPayload').innerText = '';
+                document.getElementById('res_jwtSignature').innerText = '';
+                Dpop.generateDpopProofForResource(AccessTokenHash, DpopProofForAs)
             .then((proof) => { 
-                DpopProofForResource = proof; console.log(proof); Dpop.renderBase64DpopProof(document, document.getElementById('dpopProofResourceBase64'), proof.dpopProof); 
+                DpopProofForResource = proof; 
+                Dpop.renderBase64DpopProof(document, document.getElementById('dpopProofResourceBase64'), proof.dpopProof); 
                 Dpop.renderJwt(document, proof.dpopProof, document.getElementById('res_jwtHeader'), document.getElementById('res_jwtPayload'), document.getElementById('res_jwtSignature'));
             }) 
         }); 
 
         let callApiBtn = document.getElementById('call_api_btn'); 
         callApiBtn.addEventListener('click', () => { 
-            Dpop.callAPI(AccessToken, DpopProofForResource).then((jsonResult) => {                 
+            
+            document.getElementById('apiResponseContent').innerText = '';
+            document.getElementById('loaderContainer').style.display = 'block';
+           
+            Dpop.callAPI(AccessToken, DpopProofForResource).then((jsonResult) => { 
+
                 
-                var json = JSON.parse(JSON.stringify(jsonResult));
+                var json = JSON.parse(JSON.stringify(jsonResult));                
 
                 for (const [key, value] of Object.entries(json)){
-                        var text = document.createElement("div");
-                        text.innerText = `${key}: ${value}`;
-                        document.getElementById('apiResponseContent').appendChild(text);
+                        var container = document.createElement("div");
+                        var jsonKey = document.createElement("span");
+                        var jsonValue = document.createElement("span");
+                        jsonKey.innerText = `${key}`;
+                        jsonKey.classList.add("notice_payload_claim");
+                        jsonValue.innerText = `: ${value}`;
+                        container.appendChild(jsonKey);
+                        container.appendChild(jsonValue);
+                        document.getElementById('apiResponseContent').appendChild(container);
                 };
-                // json.forEach(property => {
-                //     Object.entries(property).forEeach(([key], [value]) => {
-                //         //console.log(`${key}: ${value}`);
-                //         var text = document.createElement("div");
-                //         text.innerText = `${key}: ${value}`;
-                //         document.getElementById('apiResponseContent').appendChild(text);
-                //     });                    
-                // });                                
+                document.getElementById('loaderContainer').style.display = 'none';
+            })
+            .catch(function(err){
+                document.getElementById('loaderContainer').style.display = 'none';
+                document.getElementById('apiResponseContent').innerText = err;
             });
         }); 
     
@@ -312,7 +393,8 @@
                 i++;
                 try {
                     var scrollTo = document.getElementById(`section${i}`)
-                } catch (err) {
+                } 
+                catch (err) {
                     console.error(err);
                 }
 
@@ -331,7 +413,7 @@
             Array.prototype.forEach.call(btns, btn => {
                 var itemid = parseInt(btn.getAttribute("itemid"));
 
-                if (itemid == 4)
+                if (itemid == 5)
                     exit;
 
                 const headings = document.querySelectorAll('.expCollapse');
@@ -354,8 +436,7 @@
 
             });
         })();
-
-        window.scro
+        
     </script>
 </body>
 
