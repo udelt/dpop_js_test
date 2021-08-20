@@ -15,7 +15,7 @@ export async function generateKey() {
     var key = await crypto.subtle.generateKey({
             name: "ECDSA",
             namedCurve: "P-384"
-        }, true, ["sign", "verify"])
+        }, false, ["sign", "verify"])
         .then(function(eckey) {           
             return eckey;
         })
